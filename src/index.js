@@ -15,7 +15,7 @@ const useAsync = ({ task, dataLoader, initialData }) => {
                 setLoading(true);
                 const res = await task();
                 setResponse(res);
-                const retrievedData = await dataLoader(response);
+                const retrievedData = await dataLoader(res);
 
                 if (!unhooked) {
                     setData(retrievedData);
