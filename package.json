@@ -12,7 +12,6 @@
     "react",
     "react-hooks"
   ],
-  
   "files": [
     "lib/**.*"
   ],
@@ -30,7 +29,7 @@
     "webpack-cli": "^3.3.9"
   },
   "peerDependencies": {
-    "react": "^16.10.2"
+    "react": "^16.9.0"
   },
   "devDependencies": {
     "eslint": "^6.4.0",
