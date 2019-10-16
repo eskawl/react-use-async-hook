@@ -20,18 +20,17 @@
     "email": "sruteshp@gmail.com"
   },
   "license": "MIT",
-  "dependencies": {
+  "dependencies": {},
+  "peerDependencies": {
+    "react": "^16.9.0"
+  },
+  "devDependencies": {
     "@babel/cli": "^7.6.2",
     "@babel/core": "^7.6.2",
     "@babel/preset-env": "^7.6.2",
     "babel-loader": "^8.0.6",
     "webpack": "^4.41.0",
-    "webpack-cli": "^3.3.9"
-  },
-  "peerDependencies": {
-    "react": "^16.9.0"
-  },
-  "devDependencies": {
+    "webpack-cli": "^3.3.9",
     "eslint": "^6.4.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-plugin-import": "^2.18.2",
