@@ -8,13 +8,13 @@ Perform async tasks like calling your API and manage them through react hooks
 Using NPM:
 
 ```bash
-npm i react-use-async
+npm i react-async-hook
 ```
 
 Using yarn:
 
 ```bash
-yarn add react-use-async
+yarn add react-async-hook
 ```
 
 ### Usage
