@@ -5,7 +5,7 @@ const useAsync = ({ task, dataLoader, initialData }) => {
     const [data, setData] = useState(initialData);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [response, setResponse] = useState(null);
+    const [taskResult, setTaskResult] = useState(null);
 
     useEffect(() => {
         let unhooked = false;
@@ -14,7 +14,7 @@ const useAsync = ({ task, dataLoader, initialData }) => {
             try {
                 setLoading(true);
                 const res = await task();
-                setResponse(res);
+                setTaskResult(res);
                 const retrievedData = await dataLoader(res);
 
                 if (!unhooked) {
@@ -44,7 +44,7 @@ const useAsync = ({ task, dataLoader, initialData }) => {
         data,
         loading,
         error,
-        response,
+        taskResult,
     };
 };
 
