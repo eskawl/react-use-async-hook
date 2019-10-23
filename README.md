@@ -27,7 +27,7 @@ For example, we may not need the whole response object from the API response,
 but just the data that is returned by the API.
 - `initialData`: The place holder data to be used in place of the original data
 until the data is fetched from the async task.
-- `autoExecute`: Should the task execute everytime with the useEffect hook is executed.
+- `autoExecute`: Should the task execute everytime with the useEffect hook is executed. Default true
 
 This hook return an object containing:
 
