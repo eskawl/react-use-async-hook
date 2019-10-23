@@ -1,19 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 
-const useAsync = ({ task, dataLoader, initialData }) => {
+const useAsync = ({
+    task, dataLoader, initialData, autoExecute,
+}) => {
     const [data, setData] = useState(initialData);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [taskResult, setTaskResult] = useState(null);
-    const [runOnDemand, setRunOnDemand] = useState(() => {
-        
-    });
+
+    const execute = useRef(() => {});
 
     useEffect(() => {
         let unhooked = false;
-        
-        setRunOnDemand(async () => {
+
+        const run = async () => {
             try {
                 setLoading(true);
                 const res = await task();
@@ -34,21 +35,25 @@ const useAsync = ({ task, dataLoader, initialData }) => {
                     setLoading(false);
                 }
             }
-        });
+        };
 
-        runOnDemand();
+        execute.current = (run);
+
+        if (autoExecute) {
+            run();
+        }
 
         return () => {
             unhooked = true;
         };
-    }, [task, dataLoader]);
+    }, [task, dataLoader, autoExecute]);
 
     return {
         data,
         loading,
         error,
         taskResult,
-        runOnDemand,
+        execute: execute.current,
     };
 };
 
