@@ -6,34 +6,41 @@ const useAsync = ({ task, dataLoader, initialData }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [taskResult, setTaskResult] = useState(null);
+    const [runOnDemand, setRunOnDemand] = useState(() => {
+        
+    });
 
     useEffect(() => {
         let unhooked = false;
-
-        async function fetchData() {
-            try {
-                setLoading(true);
-                const res = await task();
-                setTaskResult(res);
-                const retrievedData = await dataLoader(res);
-
-                if (!unhooked) {
-                    setData(retrievedData);
-                }
-            } catch (e) {
-                // eslint-disable-next-line no-console
-                console.error(e);
-                if (!unhooked) {
-                    setError(e);
-                }
-            } finally {
-                if (!unhooked) {
-                    setLoading(false);
+        
+        setRunOnDemand(() => {
+            async function fetchData() {
+                try {
+                    setLoading(true);
+                    const res = await task();
+                    setTaskResult(res);
+                    const retrievedData = await dataLoader(res);
+    
+                    if (!unhooked) {
+                        setData(retrievedData);
+                    }
+                } catch (e) {
+                    // eslint-disable-next-line no-console
+                    console.error(e);
+                    if (!unhooked) {
+                        setError(e);
+                    }
+                } finally {
+                    if (!unhooked) {
+                        setLoading(false);
+                    }
                 }
             }
-        }
 
-        fetchData();
+            fetchData();
+        });
+
+        runOnDemand();
 
         return () => {
             unhooked = true;
@@ -45,6 +52,7 @@ const useAsync = ({ task, dataLoader, initialData }) => {
         loading,
         error,
         taskResult,
+        runOnDemand,
     };
 };
 
