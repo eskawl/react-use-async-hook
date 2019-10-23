@@ -23,6 +23,7 @@ module.exports = {
     externals: {
         react: 'react',
     },
+    devtool: 'source-map',
     // resolve: {
     //     alias: {
     //         react: path.resolve('./node_modules/react')
