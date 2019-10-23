@@ -5,11 +5,20 @@ const useAsync = ({
     task, dataLoader, initialData, autoExecute,
 }) => {
     const [data, setData] = useState(initialData);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [taskResult, setTaskResult] = useState(null);
 
     const execute = useRef(() => {});
+
+    let shouldAutoExecute = autoExecute;
+
+
+    if (shouldAutoExecute === undefined) {
+        shouldAutoExecute = true;
+    }
+
+    const [loading, setLoading] = useState(!!shouldAutoExecute);
+
 
     useEffect(() => {
         let unhooked = false;
@@ -39,14 +48,14 @@ const useAsync = ({
 
         execute.current = (run);
 
-        if (autoExecute) {
+        if (shouldAutoExecute) {
             run();
         }
 
         return () => {
             unhooked = true;
         };
-    }, [task, dataLoader, autoExecute]);
+    }, [task, dataLoader, shouldAutoExecute]);
 
     return {
         data,
