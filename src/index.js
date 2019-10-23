@@ -13,7 +13,7 @@ const useAsync = ({ task, dataLoader, initialData }) => {
     useEffect(() => {
         let unhooked = false;
         
-        setRunOnDemand(() => {
+        setRunOnDemand(async () => {
             try {
                 setLoading(true);
                 const res = await task();
