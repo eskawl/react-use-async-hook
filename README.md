@@ -27,6 +27,7 @@ For example, we may not need the whole response object from the API response,
 but just the data that is returned by the API.
 - `initialData`: The place holder data to be used in place of the original data
 until the data is fetched from the async task.
+- `autoExecute`: Should the task execute everytime with the useEffect hook is executed.
 
 This hook return an object containing:
 
@@ -35,6 +36,7 @@ value to the the `dataLoader`.
 - `loading`: Boolean indicating if the async task is still in progress.
 - `error`: The error that occurred during the async task.
 - `taskResult`: The whole returned value from the async task.  
+- `execute`: A function that can be called to execute the task when ever needed.
 
 ### Example
 ```js
@@ -53,16 +55,18 @@ function List(props){
     }, []);
 
     let {
-        data, loading, error
+        data, loading, error, execute: refresh
     } = useAsync({
         task: makeAPICall,
         dataLoader: useCallback((response) => {
             return response.data;
-        }, [])
+        }, []),
+        initialData: useMemo(()=>([]), []),
     });
 
     return (
         <>
+            <button type="button" onClick={refresh}>Refresh</button>
             {
                 loading ? <div>Loading</div> : (
                     error ? <div>{error}</div> : (
