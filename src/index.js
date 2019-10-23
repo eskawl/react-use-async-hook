@@ -14,30 +14,26 @@ const useAsync = ({ task, dataLoader, initialData }) => {
         let unhooked = false;
         
         setRunOnDemand(() => {
-            async function fetchData() {
-                try {
-                    setLoading(true);
-                    const res = await task();
-                    setTaskResult(res);
-                    const retrievedData = await dataLoader(res);
-    
-                    if (!unhooked) {
-                        setData(retrievedData);
-                    }
-                } catch (e) {
-                    // eslint-disable-next-line no-console
-                    console.error(e);
-                    if (!unhooked) {
-                        setError(e);
-                    }
-                } finally {
-                    if (!unhooked) {
-                        setLoading(false);
-                    }
+            try {
+                setLoading(true);
+                const res = await task();
+                setTaskResult(res);
+                const retrievedData = await dataLoader(res);
+
+                if (!unhooked) {
+                    setData(retrievedData);
+                }
+            } catch (e) {
+                // eslint-disable-next-line no-console
+                console.error(e);
+                if (!unhooked) {
+                    setError(e);
+                }
+            } finally {
+                if (!unhooked) {
+                    setLoading(false);
                 }
             }
-
-            fetchData();
         });
 
         runOnDemand();
