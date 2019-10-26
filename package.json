@@ -1,7 +1,7 @@
 {
   "name": "react-use-async-hook",
-  "version": "0.0.4",
-  "description": "",
+  "version": "0.0.5",
+  "description": "Managed state for async tasks",
   "main": "lib/index.js",
   "scripts": {
     "build": "webpack;",
@@ -18,6 +18,9 @@
   "author": {
     "name": "Srutesh Pachineela",
     "email": "sruteshp@gmail.com"
+  },
+  "repository": {
+    "url": "https://github.com/eskawl/react-use-async-hook"
   },
   "license": "MIT",
   "dependencies": {},
