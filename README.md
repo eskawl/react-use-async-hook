@@ -21,13 +21,13 @@ yarn add react-use-async-hook
 
 This hooks takes the following options:
 
-- `task`: A function which gets performs the async task.
-- `dataLoader`: A function which extracts the required data from the async task.
+- `task`: (required) A function which gets performs the async task.
+- `dataLoader`: (optional) A function which extracts the required data from the async task.
 For example, we may not need the whole response object from the API response,
 but just the data that is returned by the API.
-- `initialData`: The place holder data to be used in place of the original data
+- `initialData`: (required) The place holder data to be used in place of the original data
 until the data is fetched from the async task.
-- `autoExecute`: Should the task execute everytime with the useEffect hook is executed. Default true
+- `autoExecute`: (optional, defaults to true) Should the task execute everytime with the useEffect hook is executed.
 
 This hook return an object containing:
 

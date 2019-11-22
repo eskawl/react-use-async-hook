@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "webpack;",
+    "build:watch": "webpack -w;",
     "start": "web",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

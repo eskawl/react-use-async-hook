@@ -1,29 +1,48 @@
 import { useState, useEffect, useRef } from 'react';
 
+const identity = (x) => x;
 
-const useAsync = ({
-    task, dataLoader, initialData, autoExecute,
-}) => {
+const defaultConfig = {
+    dataLoader: identity,
+    autoExecute: true,
+};
+
+const mergeConfig = (config, defaults) => {
+    const result = {
+        ...config,
+    };
+
+    Object.entries(defaults).forEach(([key, value]) => {
+        if (!(key in result)) {
+            result[key] = value;
+        }
+    });
+
+    return result;
+};
+
+const useAsync = (config) => {
+    const {
+        task, dataLoader, initialData, autoExecute,
+    } = mergeConfig(config, defaultConfig);
+
     const [data, setData] = useState(initialData);
     const [error, setError] = useState('');
     const [taskResult, setTaskResult] = useState(null);
 
     const execute = useRef(() => {});
 
-    let shouldAutoExecute = autoExecute;
-
-
-    if (shouldAutoExecute === undefined) {
-        shouldAutoExecute = true;
-    }
-
-    const [loading, setLoading] = useState(!!shouldAutoExecute);
-
+    const [loading, setLoading] = useState(!!autoExecute);
+    const [shouldExecute, setShouldExecute] = useState(autoExecute);
 
     useEffect(() => {
         let unhooked = false;
 
         const run = async () => {
+            if (!shouldExecute) {
+                setShouldExecute(true);
+            }
+
             try {
                 setLoading(true);
                 const res = await task();
@@ -48,23 +67,22 @@ const useAsync = ({
 
         execute.current = (run);
 
-        if (shouldAutoExecute) {
+        if (shouldExecute) {
             run();
         }
 
         return () => {
             unhooked = true;
         };
-    }, [task, dataLoader, shouldAutoExecute]);
+    }, [task, dataLoader, autoExecute]);
 
     return {
         data,
         loading,
         error,
         taskResult,
-        executeRef: execute,
-        get execute() {
-            return this.executeRef.current;
+        execute: () => {
+            execute.current();
         },
     };
 };
