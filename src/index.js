@@ -62,7 +62,10 @@ const useAsync = ({
         loading,
         error,
         taskResult,
-        execute: execute.current,
+        executeRef: execute,
+        get execute() {
+            return this.executeRef.current;
+        },
     };
 };
 
