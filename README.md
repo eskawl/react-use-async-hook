@@ -25,7 +25,7 @@ This hooks takes the following options:
 - `dataLoader`: (optional) A function which extracts the required data from the async task.
 For example, we may not need the whole response object from the API response,
 but just the data that is returned by the API.
-- `initialData`: (required) The place holder data to be used in place of the original data
+- `initialData`: (optional, defaults to null) The place holder data to be used in place of the original data
 until the data is fetched from the async task.
 - `autoExecute`: (optional, defaults to true) Should the task execute everytime with the useEffect hook is executed.
 

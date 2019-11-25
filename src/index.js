@@ -5,6 +5,7 @@ const identity = (x) => x;
 const defaultConfig = {
     dataLoader: identity,
     autoExecute: true,
+    initialData: null,
 };
 
 const mergeConfig = (config, defaults) => {
