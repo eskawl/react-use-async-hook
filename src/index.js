@@ -6,6 +6,10 @@ const defaultConfig = {
     dataLoader: identity,
     autoExecute: true,
     initialData: null,
+    onError: (error) => {
+        // eslint-disable-next-line no-console
+        console.error(error);
+    },
 };
 
 const mergeConfig = (config, defaults) => {
@@ -24,7 +28,7 @@ const mergeConfig = (config, defaults) => {
 
 const useAsync = (config) => {
     const {
-        task, dataLoader, initialData, autoExecute,
+        task, dataLoader, initialData, autoExecute, onError
     } = mergeConfig(config, defaultConfig);
 
     const [data, setData] = useState(initialData);
@@ -54,8 +58,7 @@ const useAsync = (config) => {
                     setData(retrievedData);
                 }
             } catch (e) {
-                // eslint-disable-next-line no-console
-                console.error(e);
+                onError(e);
                 if (!unhooked) {
                     setError(e);
                 }

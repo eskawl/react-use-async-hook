@@ -28,6 +28,7 @@ but just the data that is returned by the API.
 - `initialData`: (optional, defaults to null) The place holder data to be used in place of the original data
 until the data is fetched from the async task.
 - `autoExecute`: (optional, defaults to true) Should the task execute everytime with the useEffect hook is executed.
+- `onError`: (optional) This function is called when an error occurs. The default behavior just logs to the console.
 
 This hook return an object containing:
 
