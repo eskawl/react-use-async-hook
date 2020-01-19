@@ -1,3 +1,4 @@
+/* eslint import/no-unresolved: [2, { ignore: ['^react$'] }] */
 import { useState, useEffect, useRef } from 'react';
 
 const identity = (x) => x;
@@ -28,14 +29,14 @@ const mergeConfig = (config, defaults) => {
 
 const useAsync = (config) => {
     const {
-        task, dataLoader, initialData, autoExecute, onError
+        task, dataLoader, initialData, autoExecute, onError,
     } = mergeConfig(config, defaultConfig);
 
     const [data, setData] = useState(initialData);
     const [error, setError] = useState('');
     const [taskResult, setTaskResult] = useState(null);
 
-    const execute = useRef(() => {});
+    const execute = useRef(() => { });
 
     const [loading, setLoading] = useState(!!autoExecute);
     const [shouldExecute, setShouldExecute] = useState(autoExecute);
@@ -43,14 +44,14 @@ const useAsync = (config) => {
     useEffect(() => {
         let unhooked = false;
 
-        const run = async () => {
+        const run = async (...taskArgs) => {
             if (!shouldExecute) {
                 setShouldExecute(true);
             }
 
             try {
                 setLoading(true);
-                const res = await task();
+                const res = await task(...taskArgs);
                 setTaskResult(res);
                 const retrievedData = await dataLoader(res);
 
@@ -85,8 +86,8 @@ const useAsync = (config) => {
         loading,
         error,
         taskResult,
-        execute: () => {
-            execute.current();
+        execute: (...args) => {
+            execute.current(...args);
         },
     };
 };

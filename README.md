@@ -43,42 +43,45 @@ value to the the `dataLoader`.
 ```js
 import useAsync from 'react-use-async'
 
-function List(props){
-    const makeAPICall = useCallback(()=>{
-        // Simulated API call
-        return new Promise(() => {
-            setTimeout(() => {
-                return {
-                    data: [1,2,3]
-                }
-            }, 3000);
-        })
-    }, []);
+function List (props){
+  const makeAPICall = useCallback((page)=>{
+      // Simulated API call
+      return new Promise((resolve) => {
+          setTimeout(() => {
+              resolve({
+                  data: [1,2,3],
+                  page,
+              })
+          }, 3000);
+      })
+  }, []);
 
-    let {
-        data, loading, error, execute: refresh
-    } = useAsync({
-        task: makeAPICall,
-        dataLoader: useCallback((response) => {
-            return response.data;
-        }, []),
-        initialData: useMemo(()=>([]), []),
-    });
+  let {
+      data, loading, error, execute: refresh
+  } = useAsync({
+      task: makeAPICall,
+      dataLoader: useCallback((response) => {
+          return response.data;
+      }, []),
+      initialData: useMemo(()=>([]), []),
+  });
 
-    return (
-        <>
-            <button type="button" onClick={refresh}>Refresh</button>
-            {
-                loading ? <div>Loading</div> : (
-                    error ? <div>{error}</div> : (
-                        <ul>
-                            {data.map(x => <li>{x}</li>)}
-                        </ul>
-                    )
-                )
-            }
-        </>
-    )
+  return (
+      <>
+        {
+          loading ? (
+            <>
+              <div>Loading...</div>
+            </>
+          ) : (
+            <div>
+              <button type="button" onClick={() => refresh(1)}>Refresh</button>
+              {data.map(x => <div key={x}>{x}</div>)}
+            </div>
+          )
+        }
+      </>
+  )
 }
 ```
 
