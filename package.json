@@ -4,8 +4,10 @@
   "description": "Managed state for async tasks",
   "main": "lib/index.js",
   "scripts": {
-    "build": "webpack;",
-    "start": "webpack -w;",
+    "build": "webpack --mode production;",
+    "start": "webpack -w --mode development;",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
