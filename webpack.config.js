@@ -6,7 +6,18 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'lib'),
         filename: 'index.js',
-        libraryTarget: 'commonjs2',
+        library: {
+            root: 'ReactUseAsyncHook',
+            amd: 'react-use-async-hook',
+            commonjs: 'react-use-async-hook',
+        },
+        libraryTarget: 'umd',
+
+        // Allow common-js to require directly
+        // useAsync = require('react-use-async-hook')
+        // rather than require('react-use-async-hook').default
+        // https://github.com/webpack/webpack/issues/3929#issuecomment-423514570
+        libraryExport: 'default',
     },
     module: {
         rules: [
