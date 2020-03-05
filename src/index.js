@@ -57,6 +57,7 @@ const useAsync = (config) => {
 
                 if (!unhooked) {
                     setData(retrievedData);
+                    setError('');
                 }
             } catch (e) {
                 onError(e);
