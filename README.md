@@ -33,7 +33,7 @@ until the data is fetched from the async task.
 This hook return an object containing:
 
 - `data`: The data that is returned by the async task. This is obtained by passing this
-value to the the `dataLoader`.
+value to the `dataLoader`.
 - `loading`: Boolean indicating if the async task is still in progress.
 - `error`: The error that occurred during the async task.
 - `taskResult`: The whole returned value from the async task.  
