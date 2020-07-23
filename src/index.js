@@ -37,16 +37,23 @@ const useAsync = (config) => {
     const [taskResult, setTaskResult] = useState(null);
 
     const [loading, setLoading] = useState(!!autoExecute);
-    const [shouldExecute, setShouldExecute] = useState(autoExecute);
 
-    const getIsUnhooked = useRef(() => false);
+    const isUnhooked = useRef(false);
+    const shouldExecute = useRef(autoExecute);
 
-    // eslint-disable-next-line no-shadow
     const run = useCallback(async (...taskArgs) => {
-        const unhooked = getIsUnhooked.current();
+        const unhooked = isUnhooked.current;
 
-        if (!shouldExecute) {
-            setShouldExecute(true);
+        if (!shouldExecute.current) {
+            // Right now, once run is invoked,
+            // execution flag is set to true.
+            // This causes autoExecution behaviour
+            // when task, or initial data changes.
+            // TODO: Add a config, to enable strict
+            // auto execution i.e., task, execution
+            // will not invoke run. It can only be
+            // invoked from outside.
+            shouldExecute.current = true;
         }
 
         try {
@@ -69,21 +76,18 @@ const useAsync = (config) => {
                 setLoading(false);
             }
         }
-    }, [dataLoader, onError, shouldExecute, task]);
+    }, [dataLoader, onError, task]);
 
 
     useEffect(() => {
-        let unhooked = false;
-        getIsUnhooked.current = () => unhooked;
-
-        if (shouldExecute) {
+        if (shouldExecute.current) {
             run();
         }
 
         return () => {
-            unhooked = true;
+            isUnhooked.current = true;
         };
-    }, [run, shouldExecute]);
+    }, [run]);
 
     return {
         data,
