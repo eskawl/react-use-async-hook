@@ -1,5 +1,5 @@
 /* eslint import/no-unresolved: [2, { ignore: ['^react$'] }] */
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 const identity = (x) => x;
 
@@ -36,42 +36,45 @@ const useAsync = (config) => {
     const [error, setError] = useState('');
     const [taskResult, setTaskResult] = useState(null);
 
-    const execute = useRef(() => { });
-
     const [loading, setLoading] = useState(!!autoExecute);
     const [shouldExecute, setShouldExecute] = useState(autoExecute);
 
+    const getIsUnhooked = useRef(() => false);
+
+    // eslint-disable-next-line no-shadow
+    const run = useCallback(async (...taskArgs) => {
+        const unhooked = getIsUnhooked.current();
+
+        if (!shouldExecute) {
+            setShouldExecute(true);
+        }
+
+        try {
+            setLoading(true);
+            const res = await task(...taskArgs);
+            setTaskResult(res);
+            const retrievedData = await dataLoader(res);
+
+            if (!unhooked) {
+                setData(retrievedData);
+                setError('');
+            }
+        } catch (e) {
+            onError(e);
+            if (!unhooked) {
+                setError(e);
+            }
+        } finally {
+            if (!unhooked) {
+                setLoading(false);
+            }
+        }
+    }, [dataLoader, onError, shouldExecute, task]);
+
+
     useEffect(() => {
         let unhooked = false;
-
-        const run = async (...taskArgs) => {
-            if (!shouldExecute) {
-                setShouldExecute(true);
-            }
-
-            try {
-                setLoading(true);
-                const res = await task(...taskArgs);
-                setTaskResult(res);
-                const retrievedData = await dataLoader(res);
-
-                if (!unhooked) {
-                    setData(retrievedData);
-                    setError('');
-                }
-            } catch (e) {
-                onError(e);
-                if (!unhooked) {
-                    setError(e);
-                }
-            } finally {
-                if (!unhooked) {
-                    setLoading(false);
-                }
-            }
-        };
-
-        execute.current = (run);
+        getIsUnhooked.current = () => unhooked;
 
         if (shouldExecute) {
             run();
@@ -80,16 +83,14 @@ const useAsync = (config) => {
         return () => {
             unhooked = true;
         };
-    }, [task, dataLoader, autoExecute]);
+    }, [run, shouldExecute]);
 
     return {
         data,
         loading,
         error,
         taskResult,
-        execute: (...args) => {
-            execute.current(...args);
-        },
+        execute: run,
     };
 };
 
