@@ -83,11 +83,11 @@ const useAsync = (config) => {
         if (shouldExecute.current) {
             run();
         }
-
-        return () => {
-            isUnhooked.current = true;
-        };
     }, [run]);
+
+    useEffect(() => () => {
+        isUnhooked.current = true;
+    }, []);
 
     return {
         data,
