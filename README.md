@@ -27,8 +27,17 @@ For example, we may not need the whole response object from the API response,
 but just the data that is returned by the API.
 - `initialData`: (optional, defaults to null) The place holder data to be used in place of the original data
 until the data is fetched from the async task.
-- `autoExecute`: (optional, defaults to true) Should the task execute everytime with the useEffect hook is executed.
+- `executeOnLoad`: (optional, defaults to true) Should the task execute every time with the useEffect hook is executed. 
+- `autoExecute`: Alias for `executeOnLoad`. If both are given, this is ignored.
 - `onError`: (optional) This function is called when an error occurs. The default behavior just logs to the console.
+- `executeOnChange`: (optional, defaults to true) If true, Execute the task if either of `dataLoader`, `onError`, `task` change. The execution behavior for various combinations are described below.
+
+| executeOnLoad  | executeOnChange   | Behavior 
+| --- | --- | ----------- |
+  | true           | true              | executes on load and executes on task change |
+  | true           | false             | executes on load and doesn't execute on task change |
+  | false          | true              | doesn't executes on load, executes on task change |
+  | false          | false             | doesn't executes on load, doesn't execute on task change |
 
 This hook return an object containing:
 

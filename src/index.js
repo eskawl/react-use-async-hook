@@ -7,8 +7,8 @@ const identity = (x) => x;
 
 const defaultConfig = {
     dataLoader: identity,
-    autoExecute: true,
-    strictAutoExecute: false,
+    executeOnLoad: true,
+    executeOnChange: true,
     initialData: null,
     onError: (error) => {
         // eslint-disable-next-line no-console
@@ -16,10 +16,26 @@ const defaultConfig = {
     },
 };
 
+const configAliases = {
+    autoExecute: 'executeOnLoad',
+};
+
 const mergeConfig = (config, defaults) => {
     const result = {
         ...config,
     };
+
+    Object.entries(configAliases).forEach(([keyToBeAliased, alias]) => {
+        if (keyToBeAliased in result) {
+            if (alias in result) {
+                // Both alias and keyToBeAlias are given
+                delete result[keyToBeAliased];
+                return;
+            }
+            result[alias] = result[keyToBeAliased];
+            delete result[keyToBeAliased];
+        }
+    });
 
     Object.entries(defaults).forEach(([key, value]) => {
         if (!(key in result)) {
@@ -32,17 +48,17 @@ const mergeConfig = (config, defaults) => {
 
 const useAsync = (config) => {
     const {
-        task, dataLoader, initialData, autoExecute, onError, strictAutoExecute,
+        task, dataLoader, initialData, executeOnLoad, onError, executeOnChange,
     } = mergeConfig(config, defaultConfig);
 
     const [data, setData] = useState(initialData);
     const [error, setError] = useState('');
     const [taskResult, setTaskResult] = useState(null);
 
-    const [loading, setLoading] = useState(!!autoExecute);
+    const [loading, setLoading] = useState(!!executeOnLoad);
 
     const isUnhooked = useRef(false);
-    const shouldExecute = useRef(autoExecute);
+    const shouldExecute = useRef(executeOnLoad);
 
     const run = useCallback(async (...taskArgs) => {
         const unhooked = isUnhooked.current;
@@ -74,34 +90,31 @@ const useAsync = (config) => {
             run();
         }
 
-        if (shouldExecute.current && strictAutoExecute) {
-            // shouldExecute.current is also set to true, when run is 
-            // invoked in certain situations or when autoExecute is true
-            //
-            // when shouldExecute.current and strictAutoExecute is true,
+        if (shouldExecute.current && !executeOnChange) {
+            // when shouldExecute.current is true and executeOnChange is false,
             // any task change should not trigger run automatically.
             // Since shouldExecute.current is controlling the execution
             // of run, we set it to false.
             //
-            // When autoExecute is false, shouldExecute.current is
+            // When executeOnLoad is false, shouldExecute.current is
             // already false, and hence will not execute run on change
-            // of run, irrespective of strictAutoExecute.
+            // of run, irrespective of executeOnChange.
             //
-            // When strictAutoExecute is false, run should be
+            // When executeOnChange is true, run should be
             // automatically executed on change of run and we shouldn't
             // set shouldExecute.current to false
 
             shouldExecute.current = false;
         }
 
-        if (!shouldExecute.current && !strictAutoExecute) {
-            // When autoExecute is false and strictAutoExecute is false,
+        if (!shouldExecute.current && executeOnChange) {
+            // When executeOnLoad is false and executeOnChange is true,
             // changes to run should trigger run automatically.
-            // As shouldExecute.current is set to false initially due to autoExecute
+            // As shouldExecute.current is set to false initially due to executeOnLoad
             // being false, we change it to true.
             shouldExecute.current = true;
         }
-    }, [run, strictAutoExecute]);
+    }, [run, executeOnChange]);
 
     useEffect(() => () => {
         isUnhooked.current = true;
