@@ -1,11 +1,14 @@
 /* eslint import/no-unresolved: [2, { ignore: ['^react$'] }] */
-import { useState, useEffect, useRef, useCallback } from 'react';
+import {
+    useState, useEffect, useRef, useCallback,
+} from 'react';
 
 const identity = (x) => x;
 
 const defaultConfig = {
     dataLoader: identity,
     autoExecute: true,
+    strictAutoExecute: false,
     initialData: null,
     onError: (error) => {
         // eslint-disable-next-line no-console
@@ -29,7 +32,7 @@ const mergeConfig = (config, defaults) => {
 
 const useAsync = (config) => {
     const {
-        task, dataLoader, initialData, autoExecute, onError,
+        task, dataLoader, initialData, autoExecute, onError, strictAutoExecute,
     } = mergeConfig(config, defaultConfig);
 
     const [data, setData] = useState(initialData);
@@ -43,18 +46,6 @@ const useAsync = (config) => {
 
     const run = useCallback(async (...taskArgs) => {
         const unhooked = isUnhooked.current;
-
-        if (!shouldExecute.current) {
-            // Right now, once run is invoked,
-            // execution flag is set to true.
-            // This causes autoExecution behaviour
-            // when task, or initial data changes.
-            // TODO: Add a config, to enable strict
-            // auto execution i.e., task, execution
-            // will not invoke run. It can only be
-            // invoked from outside.
-            shouldExecute.current = true;
-        }
 
         try {
             setLoading(true);
@@ -78,12 +69,39 @@ const useAsync = (config) => {
         }
     }, [dataLoader, onError, task]);
 
-
     useEffect(() => {
         if (shouldExecute.current) {
             run();
         }
-    }, [run]);
+
+        if (shouldExecute.current && strictAutoExecute) {
+            // shouldExecute.current is also set to true, when run is 
+            // invoked in certain situations or when autoExecute is true
+            //
+            // when shouldExecute.current and strictAutoExecute is true,
+            // any task change should not trigger run automatically.
+            // Since shouldExecute.current is controlling the execution
+            // of run, we set it to false.
+            //
+            // When autoExecute is false, shouldExecute.current is
+            // already false, and hence will not execute run on change
+            // of run, irrespective of strictAutoExecute.
+            //
+            // When strictAutoExecute is false, run should be
+            // automatically executed on change of run and we shouldn't
+            // set shouldExecute.current to false
+
+            shouldExecute.current = false;
+        }
+
+        if (!shouldExecute.current && !strictAutoExecute) {
+            // When autoExecute is false and strictAutoExecute is false,
+            // changes to run should trigger run automatically.
+            // As shouldExecute.current is set to false initially due to autoExecute
+            // being false, we change it to true.
+            shouldExecute.current = true;
+        }
+    }, [run, strictAutoExecute]);
 
     useEffect(() => () => {
         isUnhooked.current = true;
