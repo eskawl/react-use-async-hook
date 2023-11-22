@@ -1,6 +1,6 @@
 {
   "name": "react-use-async-hook",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Managed state for async tasks",
   "main": "lib/index.js",
   "scripts": {
