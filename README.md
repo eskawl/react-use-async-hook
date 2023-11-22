@@ -1,3 +1,7 @@
+⚠️ No new features! This repository is here for legacy purposes.
+Use [react-use-async-fn](https://www.npmjs.com/package/react-use-async-fn) instead
+for a better experience.
+
 ## React Hook for async tasks
 
 Perform async tasks like calling your API and manage them through react hooks
